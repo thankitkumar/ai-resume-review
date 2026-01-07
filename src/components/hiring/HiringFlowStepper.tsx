@@ -30,8 +30,14 @@ const steps: Step[] = [
   },
   {
     id: 4,
-    title: 'Offer & Decide',
-    description: 'Make the hire',
+    title: 'Interview Decision',
+    description: 'Evaluate & decide',
+    icon: <Check className="w-4 h-4" />,
+  },
+  {
+    id: 5,
+    title: 'Offer & Communication',
+    description: 'Complete the hire',
     icon: <Send className="w-4 h-4" />,
   },
 ];
