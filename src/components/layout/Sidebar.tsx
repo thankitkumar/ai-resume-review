@@ -22,7 +22,7 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { icon: LayoutDashboard, label: 'Dashboard', href: '/', isActive: true },
+  { icon: LayoutDashboard, label: 'Dashboard', href: '/dashboard' },
   { icon: Briefcase, label: 'Job Post', href: '/jobs' },
   { icon: Users, label: 'Candidates', href: '/candidates' },
 ];
