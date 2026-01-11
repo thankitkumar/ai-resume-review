@@ -20,10 +20,12 @@ export const HeroSection: React.FC = () => {
           <a href="#faq" className="text-sm text-muted-foreground hover:text-foreground transition-colors">FAQ</a>
         </div>
         <div className="flex items-center gap-3">
-          <Link to="/dashboard">
+          <Link to="/login">
             <Button variant="ghost" size="sm">Sign In</Button>
           </Link>
-          <Button size="sm">Try Free Demo</Button>
+          <Link to="/signup">
+            <Button size="sm">Start Free Trial</Button>
+          </Link>
         </div>
       </nav>
 
