@@ -1,22 +1,22 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { Header } from '@/components/layout/Header';
 import { JobsList } from '@/components/ats/JobsList';
 import { JobPostForm } from '@/components/ats/JobPostForm';
 import { JobPublishingPanel } from '@/components/ats/JobPublishingPanel';
 import { mockJobs } from '@/data/mockData';
-import { JobPost, JobPostFormData, PublishPlatform } from '@/types/ats';
+import { JobPost, JobPostFormData, PublishPlatform, PublishPlatformStatus } from '@/types/ats';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
+import { toast } from 'sonner';
 
 type ViewMode = 'list' | 'create' | 'edit' | 'publish';
 
 const Jobs: React.FC = () => {
-  const navigate = useNavigate();
   const [viewMode, setViewMode] = useState<ViewMode>('list');
   const [jobs, setJobs] = useState<JobPost[]>(mockJobs);
   const [selectedJobId, setSelectedJobId] = useState<string | null>(null);
+  const [isPublishing, setIsPublishing] = useState(false);
 
   const selectedJob = jobs.find(j => j.id === selectedJobId);
 
@@ -40,6 +40,63 @@ const Jobs: React.FC = () => {
     };
     setJobs([newJob, ...jobs]);
     setViewMode('list');
+    toast.success('Job post created successfully!');
+  };
+
+  const handlePublish = async (platforms: PublishPlatform[], customUrl?: string) => {
+    if (!selectedJobId) return;
+    
+    setIsPublishing(true);
+    
+    // Simulate publishing to platforms with mock delays
+    const results: PublishPlatformStatus[] = [];
+    
+    for (const platform of platforms) {
+      // Simulate API call delay
+      await new Promise(resolve => setTimeout(resolve, 800));
+      
+      // Mock success (90% success rate for demo)
+      const isSuccess = Math.random() > 0.1;
+      
+      results.push({
+        platform,
+        status: isSuccess ? 'published' : 'failed',
+        publishedAt: isSuccess ? new Date().toISOString() : undefined,
+        url: isSuccess ? `https://${platform}.example.com/job/${selectedJobId}` : undefined,
+        error: isSuccess ? undefined : 'Connection timeout. Please try again.',
+      });
+    }
+    
+    // Update job with published platforms
+    setJobs(prevJobs => 
+      prevJobs.map(job => {
+        if (job.id === selectedJobId) {
+          const existingPlatforms = job.publishedPlatforms.filter(
+            p => !results.some(r => r.platform === p.platform)
+          );
+          return {
+            ...job,
+            publishedPlatforms: [...existingPlatforms, ...results],
+            status: 'published' as const,
+            updatedAt: new Date().toISOString(),
+          };
+        }
+        return job;
+      })
+    );
+    
+    setIsPublishing(false);
+    
+    const successCount = results.filter(r => r.status === 'published').length;
+    const failCount = results.filter(r => r.status === 'failed').length;
+    
+    if (failCount === 0) {
+      toast.success(`Successfully published to ${successCount} platform${successCount !== 1 ? 's' : ''}!`);
+    } else if (successCount === 0) {
+      toast.error('Failed to publish to all platforms. Please try again.');
+    } else {
+      toast.warning(`Published to ${successCount} platform${successCount !== 1 ? 's' : ''}, ${failCount} failed.`);
+    }
   };
 
   return (
@@ -66,7 +123,12 @@ const Jobs: React.FC = () => {
                 <h3 className="text-lg font-semibold mb-4">{selectedJob.title}</h3>
                 <p className="text-sm text-muted-foreground whitespace-pre-wrap">{selectedJob.description}</p>
               </div>
-              <JobPublishingPanel jobTitle={selectedJob.title} currentPlatforms={selectedJob.publishedPlatforms} onPublish={() => {}} />
+              <JobPublishingPanel 
+                jobTitle={selectedJob.title} 
+                currentPlatforms={selectedJob.publishedPlatforms} 
+                onPublish={handlePublish}
+                isPublishing={isPublishing}
+              />
             </div>
           )}
         </div>
