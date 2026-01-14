@@ -15,6 +15,8 @@ import Applications from "./pages/Applications";
 import Messages from "./pages/Messages";
 import Subscription from "./pages/Subscription";
 import HiringFlow from "./pages/HiringFlow";
+import Terms from "./pages/Terms";
+import Privacy from "./pages/Privacy";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -38,6 +40,8 @@ const App = () => (
             <Route path="/messages" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
             <Route path="/subscription" element={<ProtectedRoute><Subscription /></ProtectedRoute>} />
             <Route path="/hiring" element={<ProtectedRoute><HiringFlow /></ProtectedRoute>} />
+            <Route path="/terms" element={<Terms />} />
+            <Route path="/privacy" element={<Privacy />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </TooltipProvider>
