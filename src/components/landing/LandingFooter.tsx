@@ -1,11 +1,12 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 export const LandingFooter: React.FC = () => {
   const links = [
-    { label: 'About', href: '#' },
-    { label: 'Privacy Policy', href: '#' },
-    { label: 'Terms', href: '#' },
-    { label: 'Contact', href: '#' },
+    { label: 'About', href: '#', isExternal: true },
+    { label: 'Privacy Policy', href: '/privacy', isExternal: false },
+    { label: 'Terms', href: '/terms', isExternal: false },
+    { label: 'Contact', href: '#', isExternal: true },
   ];
 
   return (
@@ -26,13 +27,23 @@ export const LandingFooter: React.FC = () => {
           {/* Links */}
           <nav className="flex items-center gap-6">
             {links.map((link, index) => (
-              <a
-                key={index}
-                href={link.href}
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-              >
-                {link.label}
-              </a>
+              link.isExternal ? (
+                <a
+                  key={index}
+                  href={link.href}
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  {link.label}
+                </a>
+              ) : (
+                <Link
+                  key={index}
+                  to={link.href}
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  {link.label}
+                </Link>
+              )
             ))}
           </nav>
         </div>
